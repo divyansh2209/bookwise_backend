@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from './assets/BookwiseLogo.png'; // Correct import
+import Logo from './assets/BookwiseLogo.png'; 
 
 const Landing = () => {
   return (

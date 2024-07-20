@@ -9,6 +9,7 @@ import Landing from './Landing.jsx'
 import { ChakraProvider } from '@chakra-ui/react'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx';
+import Taskeaways from './pages/Taskeaways.jsx';
 
 
 const router = createBrowserRouter([
@@ -31,13 +32,18 @@ const router = createBrowserRouter([
     ),
   },
 
+  {
+    path: '/takeaways',
+    element: (
+      <Taskeaways></Taskeaways>
+    )
+  }
+
 ]);
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ChakraProvider>
-    {/* <Landing />
-    <Login /> */}
 
     <RouterProvider router={router} />
 
