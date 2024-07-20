@@ -17,7 +17,11 @@
     "@heroicons/react": "^2.1.5",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.7",
+<<<<<<< HEAD
     "@tailwindcss/typography": "^0.5.13",
+=======
+    "axios": "^1.7.2",
+>>>>>>> 69d1681cccaaf8fd310a418dd3c00bcaef673fa3
     "framer-motion": "^11.3.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
