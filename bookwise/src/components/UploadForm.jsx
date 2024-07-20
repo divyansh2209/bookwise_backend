@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
-import axios from 'axios';
+import React, { useState } from 'react';
 
-const UploadForm = ({ }) => {
+const UploadForm = ({ closeModal }) => {
     const [title, setTitle] = useState("");
     const [file, setFile] = useState("");
 
@@ -23,65 +22,60 @@ const UploadForm = ({ }) => {
 
             const data = await response.json();
             console.log('Stored PDF:', data);
+            closeModal(); // Close the modal on successful upload
         } catch (error) {
             console.error('Error uploading file:', error);
         }
     };
 
     return (
-        <div className="relative">
-            <div className="inset-0 z-10 w-full h-screen overflow-y-auto">
-                <div className="absolute inset-0 w-full h-full bg-gray-500 opacity-75">
-                </div>
-                <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                    <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-                    </span>
-                    <div className="relative inline-block overflow-hidden transition-all transform sm:align-middle sm:max-w-lg" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-                        <div>
-                            <div className="rounded-lg p-8 bg-white shadow">
-                                <div className="bg-white dark:bg-gray-800 ">
-                                    <div className="text-center w-full mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
-
-                                        <form onSubmit={handleSubmit}>
-                                            <div className='mb-5'>
-                                                <label htmlFor="">File Name: </label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    placeholder="Title"
-                                                    required
-                                                    onChange={(e) => setTitle(e.target.value)}
-                                                />
-                                            </div>
-
-                                            <div className='mb-5'>
-                                                <input
-                                                    type="file"
-                                                    className="form-control"
-                                                    accept="application/pdf"
-                                                    required
-                                                    onChange={(e) => setFile(e.target.files[0])}
-                                                />
-
-                                            </div>
-
-                                            <button
-                                                type="submit"
-                                                className="flex w-full justify-center rounded-md bg-darkBlue px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                            >
-                                                Upload
-                                            </button>
-                                        </form>
-
-                                    </div>
-                                </div>
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="fixed inset-0 w-full h-full bg-gray-500 opacity-75" onClick={closeModal}></div>
+            <div className="flex items-center justify-center min-h-screen px-4 py-8">
+                <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md z-20">
+                    <button
+                        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        onClick={closeModal}
+                    >
+                        &times;
+                    </button>
+                    <div className="p-6">
+                        <h2 className="text-lg font-semibold mb-4">Upload Your Book</h2>
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-5">
+                                <label htmlFor="title" className="block mb-2">File Name:</label>
+                                <input
+                                    type="text"
+                                    id="title"
+                                    className="form-control w-full px-3 py-2 border border-gray-300 rounded"
+                                    placeholder="Title"
+                                    required
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
                             </div>
-                        </div>
+                            <div className="mb-5">
+                                <label htmlFor="file" className="block mb-2">File:</label>
+                                <input
+                                    type="file"
+                                    id="file"
+                                    className="form-control w-full px-3 py-2 border border-gray-300 rounded"
+                                    accept="application/pdf"
+                                    required
+                                    onChange={(e) => setFile(e.target.files[0])}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full bg-darkBlue text-white py-2 rounded hover:bg-indigo-500"
+                            >
+                                Upload
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default UploadForm
+export default UploadForm;
