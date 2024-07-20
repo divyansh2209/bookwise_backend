@@ -1,11 +1,19 @@
-import React from 'react';
-import Logo from './assets/BookwiseLogo.png'; 
+import React, { useState } from 'react';
+import Logo from './assets/BookwiseLogo.png';
+import axios from 'axios';
+import UploadForm from './components/UploadForm';
 
 const Landing = () => {
+  const [formState, setFormState] = useState(false);
+
+
   return (
     <section className='bg-[#CAF4FF] overflow-y-auto h-screen'>
+
+      {formState && <UploadForm />}
+
       <div className='flex my-5 mx-4 mb-7'>
-        <img src={Logo} alt="Bookwise Logo" className='w-7 mr-2'/> 
+        <img src={Logo} alt="Bookwise Logo" className='w-7 mr-2' />
         <h1 className='text-primaryBlue text-2xl font-bold'>Bookwise</h1>
       </div>
 
@@ -20,11 +28,12 @@ const Landing = () => {
           </p>
         </div>
         <div className='flex justify-center py-4'>
-          <button className='px-4 py-2 rounded-lg bg-buttonBg hover:bg-buttonHover text-darkBlue font-medium'>
+          <button onClick={() => setFormState(!formState)} className='px-4 py-2 rounded-lg bg-buttonBg hover:bg-buttonHover text-darkBlue font-medium'>
             Upload your book
           </button>
         </div>
       </div>
+      
     </section>
   );
 };
