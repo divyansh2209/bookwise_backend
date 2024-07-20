@@ -1,7 +1,7 @@
 const express = require('express');
 const server = express();
 const cors = require("cors");
-const multer = require('multer')
+// const multer = require('multer')
 const mongoose = require('mongoose');
 
 
@@ -18,7 +18,6 @@ server.use(fileUpload());
 main().catch(err => console.log(err));
 async function main() {
     await mongoose.connect('mongodb+srv://divyanshracvik2209:NeuralBlocks@cluster0.5hwcnpd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
-    // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
     console.log('database connected');
 }
 
