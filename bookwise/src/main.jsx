@@ -30,16 +30,11 @@ const router = createBrowserRouter([
         <Signup></Signup>
     ),
   },
-
 ]);
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ChakraProvider>
-    {/* <Landing />
-    <Login /> */}
-
     <RouterProvider router={router} />
-
   </ChakraProvider>
 )
