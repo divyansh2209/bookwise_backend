@@ -7,6 +7,7 @@ const pdfRoutes = require('./routes/Pdf');
 const fileUpload = require("express-fileupload");
 
 
+server.use(express.json());
 server.use(cors());
 server.use("/", express.static("public"));
 server.use(fileUpload());
