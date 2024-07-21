@@ -11,7 +11,7 @@ const UploadForm = ({ closeModal }) => {
         formData.append("file", file);
 
         try {
-            const response = await fetch('http://localhost:8080/extract-text', {
+            const response = await fetch('http://localhost:8080/pdf/extract-text', {
                 method: "POST",
                 body: formData,
             });
