@@ -1,21 +1,27 @@
-import React, { useContext, useState } from 'react';
-import { redirect } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
 import { usePdf } from '../context/PdfContext';
 
 const UploadForm = ({ closeModal }) => {
     const [title, setTitle] = useState("");
     const [file, setFile] = useState("");
-    // const [pdfId, setPdfId] = useState(null);
-    // const [ChapterArr , setChapterArr] = useState([]);
+    const [pdfId, setPdfId ] = useState();
+    const [chapterArr, setChapterArr ] = useState();
+    // const { ,  } = usePdf();
+    const navigate = useNavigate();
 
-    const { pdfId, setPdfId, chapterArr, setChapterArr } = usePdf();
+    
 
+    useEffect(() => {
+        console.log("Updated PDF ID:", pdfId);
+    }, [pdfId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("title", title);
         formData.append("file", file);
+
 
         try {
             const response = await fetch('http://localhost:8080/pdf/extract-text', {
@@ -34,12 +40,14 @@ const UploadForm = ({ closeModal }) => {
             setPdfId(id);
             setChapterArr(data.pythonScriptResponse);
             
-            // console.log("PDF ID: " , id);
             closeModal(); 
+            navigate('/takeaways', { state: { pdfId: id, chapterArr: data.pythonScriptResponse } });
+
         } catch (error) {
             console.error('Error uploading file:', error);
         }
     };
+
 
     return (
         <div className="fixed inset-0 z-10 overflow-y-auto">

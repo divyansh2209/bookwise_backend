@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react'
 import { usePdf } from '../context/PdfContext';
 
+import { useLocation } from 'react-router-dom';
+
 
 
 const items = [
@@ -40,15 +42,16 @@ const itemsPerPage = 10
 
 const Taskeaways = () => {
 
-  const { pdfId, chapterArr } = usePdf();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [items, setItems] = useState([]);
+  const location = useLocation()
+  const { pdfId, chapterArr } = location.state || {}
+  const [currentPage, setCurrentPage] = useState(1)
+  const [items, setItems] = useState([])
 
-  console.log("ID" , pdfId);
-  console.log("chapter" , chapterArr);
-  console.log("ITEMS: " , items);
-  
-  const pdfBody = chapterArr[currentPage - 1];
+  console.log('ID', pdfId)
+  console.log('chapter', chapterArr)
+  console.log('ITEMS: ', items)
+
+  const pdfBody = chapterArr ? chapterArr[currentPage - 1] : []
 
   const sendDataToBackend = async (pdfId, pdfBody) => {
     try {
@@ -57,26 +60,25 @@ const Taskeaways = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ pdfId, pdfBody }), // Send pdfBody as a string
-      });
+        body: JSON.stringify({ pdfId, pdfBody }),
+      })
 
-      const data = await response.json();
-      setItems(data)
-      console.log('Response from backend:', data);
+      const data = await response.json()
+      console.log('Response from backend:', data)
 
-      // Assuming the response data should be added to the items
-      setItems(prevItems => [...prevItems, ...data]);
+      // Assuming the response data should replace the items
+      setItems(data.processed_data)
     } catch (error) {
-      console.error('Error sending data to backend:', error);
+      console.error('Error sending data to backend:', error)
     }
-  };
+  }
 
   useEffect(() => {
     if (pdfId && pdfBody) {
-      sendDataToBackend(pdfId , pdfBody);
+      sendDataToBackend(pdfId, pdfBody)
       console.log('HELLOOO')
     }
-  }, [pdfId, pdfBody]);
+  }, [pdfId, pdfBody])
 
 
   // Calculate the indices of items to show on the current page

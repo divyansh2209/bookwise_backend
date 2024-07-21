@@ -136,9 +136,6 @@ exports.fetchChaptersById = async (req, res) => {
 exports.getResult = async (req, res) => {
     const { pdfId , pdfBody } = req.body; 
 
-    // const pdfId = '669d123e22aa172f36a55447'
-
-
     try {
         const llmResponse = await callTogetherAI(pdfBody);
         console.log("LLM", llmResponse);
@@ -152,20 +149,7 @@ exports.getResult = async (req, res) => {
         if (!pdf) {
             return res.status(404).json({ error: 'PDF not found' });
         }
-
-        // const response = {
-        //     'Chapter 6': {
-        //         Flash1: {
-        //             shortDesc: "The author's journey of self-improvement led to a new understanding of suffering.",
-        //             longDesc: 'The author recounts their journey of self-improvement, which involved exploring various teachings, studies, and methods to overcome personal problems. This journey included reading numerous books, studying psychology, attending therapy sessions, and practicing habits such as meditation and self-reflection.'
-        //         },
-        //         Flash2: {
-        //             shortDesc: 'The author tried various methods to overcome their problems, including changing habits and diet.',
-        //             longDesc: 'The author describes the different methods they tried to overcome their problems, including changing their habits, waking up at 4am, and altering their diet. They also attempted to become more structured and disciplined, and engaged in practices such as shadow work and studying personality types.'
-        //         }
-        //     }
-        // }
-
+        
         // Process the response and update processed_data
         pdf.processed_data  = Object.keys(response).map((chapterKey) => {
             return {
