@@ -1,44 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import Logo from '../assets/BookwiseLogo.png'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-import {
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon, Box
-} from '@chakra-ui/react'
-
+import React, { useEffect, useState } from 'react';
+import Logo from '../assets/BookwiseLogo.png';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import { Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
-import { data } from 'autoprefixer';
+import { textVide } from 'text-vide';
+import parse from 'html-react-parser';
 
-
-
-const items = [
-  {
-    id: 1,
-    title: 'Back End Developer',
-    department: 'Engineering',
-    type: 'Full-time',
-    location: 'Remote'
-  },
-  {
-    id: 2,
-    title: 'Front End Developer',
-    department: 'Engineering',
-    type: 'Full-time',
-    location: 'Remote'
-  },
-  {
-    id: 3,
-    title: 'User Interface Designer',
-    department: 'Design',
-    type: 'Full-time',
-    location: 'Remote'
-  }
-]
-
-const itemsPerPage = 10
+const itemsPerPage = 10;
 
 const Taskeaways = () => {
   const location = useLocation();
@@ -46,13 +14,15 @@ const Taskeaways = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [items, setItems] = useState([]);
 
-  console.log("CURRENT PAGE  " , currentPage);
-
+  console.log("CURRENT PAGE  ", currentPage);
   console.log('ID', pdfId);
   console.log('Chapter', chapterArr);
   console.log('ITEMS: ', items);
 
-  const pdfBody = chapterArr ? chapterArr[currentPage - 1] : '';
+  const removeFirstWord = (str) => {
+    const words = str.split(' ');
+    return words.length > 1 ? words.slice(1).join(' ') : str;
+  };
 
   const sendDataToBackend = async (pdfId, pdfBody) => {
     try {
@@ -70,6 +40,7 @@ const Taskeaways = () => {
 
       // Parse response as text
       const data = await response.text();
+      // data.length > 1 ? data.slice(1).join(' ') : data;
       console.log('Response from backend:', data);
 
       // Update state to append the new data
@@ -80,35 +51,23 @@ const Taskeaways = () => {
   };
 
   useEffect(() => {
-    if (pdfId && pdfBody) {
+    if (pdfId && chapterArr && currentPage > 0) {
+      const pdfBody = chapterArr[currentPage - 1] || '';
       sendDataToBackend(pdfId, pdfBody);
-      console.log('HELLOOO');
     }
-  }, [pdfId, pdfBody, currentPage]);
+  }, [pdfId, chapterArr, currentPage]);
 
-  // Calculate the indices of items to show on the current page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Calculate total pages
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const totalPages = chapterArr ? chapterArr.length : 0;
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    } else {
-      // If next page is beyond total pages, optionally handle this case
-      console.log('No more pages');
+      setCurrentPage((prevPage) => prevPage + 1);
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    } else {
-      // If previous page is before page 1, optionally handle this case
-      console.log('Already on the first page');
+      setCurrentPage((prevPage) => prevPage - 1);
     }
   };
 
@@ -143,22 +102,13 @@ const Taskeaways = () => {
           <h1 className='text-[1.5rem]'>Chapter {currentPage}</h1>
         </div>
 
-        <div className="col-span-full">
-          <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
-            About
-          </label>
-          <div className="mt-2">
-            <textarea
-              id="about"
-              name="about"
-              rows={3}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              defaultValue={''}
-            />
-          </div>
+        <div className="col-span-full bg-white p-4 rounded-lg">
+
           {items.map((item, index) => (
-            <div key={index}>{item}</div>  // Ensure items are rendered as strings or elements
+            <div className='text-lg ' key={index}>{parse(textVide(item))}</div>  // Ensure items are rendered as strings or elements
           ))}
+
+
         </div>
 
         <div className='flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-4'>
@@ -186,7 +136,7 @@ const Taskeaways = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Taskeaways
+export default Taskeaways;

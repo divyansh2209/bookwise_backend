@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.text-lg > b {
+    background-color: rgba(255, 192, 203, 0.5);
+    /* Pale Pink with 50% opacity /
+    color: #000; / Black text for contrast */
+}
+
+.text-lg b:first-child {
+    text-transform: uppercase;
+    /* color: red; */
+    font-weight: bold;
+  }

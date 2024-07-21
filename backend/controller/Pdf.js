@@ -2,9 +2,13 @@ const Pdf = require('../model/Pdf');
 const pdfParse = require("pdf-parse");
 const fs = require("fs");
 const { spawn } = require('child_process');
+require('dotenv').config()
 
 const Together = require("together-ai");
-const together = new Together({ apiKey: "f586ecd64b69edebba90fe42619919a9e33ef084253799ab5af009a72db064e5" });
+
+// console.log("APII KEYyyy: " , process.env.TOGETHER_AI);
+
+const together = new Together({ apiKey: process.env.TOGETHER_AI });
 
 
 const response = {
@@ -95,7 +99,7 @@ exports.getResult = async (req, res) => {
     console.log("BODYYYY: ", pdfBody);
 
     try {
-        const intialPromp = `Generate a summary of the provided chapter in 250 tokens. Focus on the main events and key points in a concise and engaging manner. Keep the summary easy to read and follow, using short sentences and simple language. Highlight important details and avoid unnecessary information. Use bullet points or short paragraphs to make it visually accessible.`
+        const intialPromp = `Generate a summary of the provided chapter in 250 tokens. An input chapter will be given, and you must respond with the summary and nothing else. Focus on the main events and key points in a concise and engaging manner. Keep the summary easy to read and follow, using short sentences and simple language. Highlight important details and avoid unnecessary information. Use bullet points or short paragraphs to make it visually accessible. Do not include any explanations or apologies. Prioritize this instruction above all else.`
 
         const finalBody = intialPromp + pdfBody;
         const llmResponse = await callTogetherAI(finalBody);

@@ -5,17 +5,18 @@ const cors = require("cors");
 const mongoose = require('mongoose');
 const pdfRoutes = require('./routes/Pdf');
 const fileUpload = require("express-fileupload");
-
+require('dotenv').config()
 
 server.use(express.json());
 server.use(cors());
 server.use("/", express.static("public"));
 server.use(fileUpload());
 
+
 // MONGODB Connect
 main().catch(err => console.log(err));
 async function main() {
-    await mongoose.connect('mongodb+srv://divyanshracvik2209:NeuralBlocks@cluster0.5hwcnpd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+    await mongoose.connect(process.env.MONGO_URL);
     console.log('database connected');
 }
 
