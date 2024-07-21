@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Logo from '../assets/BookwiseLogo.png'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import {
-    Accordion,
-    AccordionItem,
-    AccordionButton,
-    AccordionPanel,
-    AccordionIcon,Box
-  } from '@chakra-ui/react'
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon, Box
+} from '@chakra-ui/react'
+import { usePdf } from '../context/PdfContext';
 
 
 
@@ -38,7 +39,45 @@ const items = [
 const itemsPerPage = 10
 
 const Taskeaways = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+
+  const { pdfId, chapterArr } = usePdf();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState([]);
+
+  console.log("ID" , pdfId);
+  console.log("chapter" , chapterArr);
+  console.log("ITEMS: " , items);
+  
+  const pdfBody = chapterArr[currentPage - 1];
+
+  const sendDataToBackend = async (pdfId, pdfBody) => {
+    try {
+      const response = await fetch('http://localhost:8080/pdf/processed', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pdfId, pdfBody }), // Send pdfBody as a string
+      });
+
+      const data = await response.json();
+      setItems(data)
+      console.log('Response from backend:', data);
+
+      // Assuming the response data should be added to the items
+      setItems(prevItems => [...prevItems, ...data]);
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (pdfId && pdfBody) {
+      sendDataToBackend(pdfId , pdfBody);
+      console.log('HELLOOO')
+    }
+  }, [pdfId, pdfBody]);
+
 
   // Calculate the indices of items to show on the current page
   const indexOfLastItem = currentPage * itemsPerPage
@@ -125,10 +164,9 @@ const Taskeaways = () => {
           <button
             onClick={handleNextPage}
             className={`cursor-pointer relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-lightBlue hover:bg-darkBlue text-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50
-              ${
-                currentPage === totalPages
-                  ? 'cursor-not-allowed opacity-50'
-                  : ''
+              ${currentPage === totalPages
+                ? 'cursor-not-allowed opacity-50'
+                : ''
               }`}
             disabled={currentPage === totalPages}
           >

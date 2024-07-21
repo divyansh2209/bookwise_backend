@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { redirect } from 'react-router-dom';
+import { usePdf } from '../context/PdfContext';
 
 const UploadForm = ({ closeModal }) => {
     const [title, setTitle] = useState("");
     const [file, setFile] = useState("");
+    // const [pdfId, setPdfId] = useState(null);
+    // const [ChapterArr , setChapterArr] = useState([]);
+
+    const { pdfId, setPdfId, chapterArr, setChapterArr } = usePdf();
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,7 +29,13 @@ const UploadForm = ({ closeModal }) => {
 
             const data = await response.json();
             console.log('Stored PDF:', data);
-            closeModal(); // Close the modal on successful upload
+            const id = data.pdfId;
+            console.log(id);
+            setPdfId(id);
+            setChapterArr(data.pythonScriptResponse);
+            
+            // console.log("PDF ID: " , id);
+            closeModal(); 
         } catch (error) {
             console.error('Error uploading file:', error);
         }

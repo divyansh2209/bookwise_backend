@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
 
 const pdfSchema = new Schema({
     title: { type: String },
-    raw_text: { type: String },
-    chapters:{type: Array}
-
+    chapters: { type: Array },
+    processed_data: { 
+        type: [Schema.Types.Mixed], // An array of objects
+        default: [] 
+    },
 });
 
 const Pdf = mongoose.model('Pdf', pdfSchema);
