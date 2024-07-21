@@ -8,9 +8,9 @@ import {
   AccordionPanel,
   AccordionIcon, Box
 } from '@chakra-ui/react'
-import { usePdf } from '../context/PdfContext';
 
 import { useLocation } from 'react-router-dom';
+import { data } from 'autoprefixer';
 
 
 
@@ -41,17 +41,18 @@ const items = [
 const itemsPerPage = 10
 
 const Taskeaways = () => {
+  const location = useLocation();
+  const { pdfId, chapterArr } = location.state || {};
+  const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState([]);
 
-  const location = useLocation()
-  const { pdfId, chapterArr } = location.state || {}
-  const [currentPage, setCurrentPage] = useState(1)
-  const [items, setItems] = useState([])
+  console.log("CURRENT PAGE  " , currentPage);
 
-  console.log('ID', pdfId)
-  console.log('chapter', chapterArr)
-  console.log('ITEMS: ', items)
+  console.log('ID', pdfId);
+  console.log('Chapter', chapterArr);
+  console.log('ITEMS: ', items);
 
-  const pdfBody = chapterArr ? chapterArr[currentPage - 1] : []
+  const pdfBody = chapterArr ? chapterArr[currentPage - 1] : '';
 
   const sendDataToBackend = async (pdfId, pdfBody) => {
     try {
@@ -61,45 +62,55 @@ const Taskeaways = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ pdfId, pdfBody }),
-      })
+      });
 
-      const data = await response.json()
-      console.log('Response from backend:', data)
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-      // Assuming the response data should replace the items
-      setItems(data.processed_data)
+      // Parse response as text
+      const data = await response.text();
+      console.log('Response from backend:', data);
+
+      // Update state to append the new data
+      setItems([data]);
     } catch (error) {
-      console.error('Error sending data to backend:', error)
+      console.error('Error sending data to backend:', error);
     }
-  }
+  };
 
   useEffect(() => {
     if (pdfId && pdfBody) {
-      sendDataToBackend(pdfId, pdfBody)
-      console.log('HELLOOO')
+      sendDataToBackend(pdfId, pdfBody);
+      console.log('HELLOOO');
     }
-  }, [pdfId, pdfBody])
-
+  }, [pdfId, pdfBody, currentPage]);
 
   // Calculate the indices of items to show on the current page
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem)
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
 
   // Calculate total pages
-  const totalPages = Math.ceil(items.length / itemsPerPage)
+  const totalPages = Math.ceil(items.length / itemsPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1)
+      setCurrentPage(currentPage + 1);
+    } else {
+      // If next page is beyond total pages, optionally handle this case
+      console.log('No more pages');
     }
-  }
+  };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1)
+      setCurrentPage(currentPage - 1);
+    } else {
+      // If previous page is before page 1, optionally handle this case
+      console.log('Already on the first page');
     }
-  }
+  };
 
   return (
     <section className='bg-backgroundBlue overflow-y-auto h-screen'>
@@ -129,28 +140,26 @@ const Taskeaways = () => {
       <div className='mx-5 md:mx-10'>
         <div className='mb-4'>
           {/* Chapter Name / index Name */}
-          <h1 className='text-[1.5rem]'>Chapter 1</h1>
+          <h1 className='text-[1.5rem]'>Chapter {currentPage}</h1>
         </div>
 
-        <Accordion allowToggle className='bg-white p-4 rounded-lg shadow'>
-          {currentItems.map(item => (
-            <AccordionItem key={item.id}>
-              <h2>
-                <AccordionButton>
-                  <Box as='span' flex='1' textAlign='left'>
-                    {item.title}
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <p><strong>Department:</strong> {item.department}</p>
-                <p><strong>Type:</strong> {item.type}</p>
-                <p><strong>Location:</strong> {item.location}</p>
-              </AccordionPanel>
-            </AccordionItem>
+        <div className="col-span-full">
+          <label htmlFor="about" className="block text-sm font-medium leading-6 text-gray-900">
+            About
+          </label>
+          <div className="mt-2">
+            <textarea
+              id="about"
+              name="about"
+              rows={3}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              defaultValue={''}
+            />
+          </div>
+          {items.map((item, index) => (
+            <div key={index}>{item}</div>  // Ensure items are rendered as strings or elements
           ))}
-        </Accordion>
+        </div>
 
         <div className='flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-6 mt-4'>
           <button
