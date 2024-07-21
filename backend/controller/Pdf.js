@@ -3,6 +3,7 @@ const pdfParse = require("pdf-parse");
 const fs = require("fs");
 const { spawn } = require('child_process');
 require('dotenv').config()
+const path = require('path');
 
 const Together = require("together-ai");
 
@@ -120,7 +121,7 @@ exports.getResult = async (req, res) => {
 
         // Append the LLM response to the chapterSummary field
         pdf.chapters_summary.push(llmResponse);
-        
+
         await pdf.save();
 
         res.status(200).send(llmResponse);
@@ -142,12 +143,16 @@ exports.extractText = async (req, res) => {
     try {
         const result = await pdfParse(req.files.file);
         // Ensure the directory exists
-        const path = './textFiles/';
-        if (!fs.existsSync(path)) {
-            fs.mkdirSync(path, { recursive: true });
+
+        const textFileDir = path.resolve(__dirname, 'textFiles');
+
+
+        // const path = './textFiles/';
+        if (!fs.existsSync(textFileDir)) {
+            fs.mkdirSync(textFileDir, { recursive: true });
         }
         // Write the extracted text to a file
-        const textFilePath = `${path}${req.body.title}.txt`;
+        const textFilePath = `${textFileDir}${req.body.title}.txt`;
         fs.writeFileSync(textFilePath, result.text, 'utf8');
         console.log('PDF parsed and text written to file.');
 
