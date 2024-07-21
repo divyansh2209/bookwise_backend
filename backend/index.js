@@ -6,7 +6,10 @@ const mongoose = require('mongoose');
 const pdfRoutes = require('./routes/Pdf');
 const fileUpload = require("express-fileupload");
 require('dotenv').config()
+const path = require('path');
 
+const distDir = path.resolve(__dirname, 'dist'); // Define the dist directory
+server.use(express.static(distDir));
 server.use(express.json());
 server.use(cors());
 server.use("/", express.static("public"));
